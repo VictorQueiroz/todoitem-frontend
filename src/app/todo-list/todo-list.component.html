@@ -1,0 +1,38 @@
+<div class="todo-list">
+  <mat-card
+    class="todo-item"
+    *ngFor="let todoItem of todoItems"
+    [ngClass]="{ disabled: isBusy(todoItem) }"
+  >
+    <mat-card-content>
+      <div class="todo-item-input-group">
+        <input
+          [disabled]="isBusy(todoItem)"
+          placeholder="Title"
+          class="todo-item-input todo-item-input-title"
+          [(ngModel)]="todoItem.title"
+        />
+      </div>
+      <div class="todo-item-input-group">
+        <textarea
+          [disabled]="isBusy(todoItem)"
+          placeholder="Description"
+          class="todo-item-input todo-item-input-description"
+          (change)="onChangeDescription(todoItem)"
+          [(ngModel)]="todoItem.description"
+        ></textarea>
+      </div>
+      <button
+        [disabled]="isBusy(todoItem)"
+        (click)="deleteTodoItem(todoItem)"
+        mat-button
+        color="warn"
+      >
+        {{ isBusy(todoItem) ? "Saving..." : "Delete" }}
+      </button>
+    </mat-card-content>
+  </mat-card>
+  <div class="todo-list-spinner" *ngIf="isGettingTodoItems">
+    <mat-spinner diameter="24"></mat-spinner>
+  </div>
+</div>

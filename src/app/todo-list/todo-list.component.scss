@@ -1,0 +1,31 @@
+@import "../../variables.scss";
+
+:host {
+  .todo-list {
+    padding: $spacer * 2;
+    &-spinner {
+      display: flex;
+      justify-content: center;
+    }
+  }
+  .todo-item {
+    &:not(:last-child) {
+      margin-bottom: $spacer;
+    }
+    &-input-group {
+      &:not(:last-child) {
+        margin-bottom: $spacer;
+      }
+    }
+    &-input {
+      border: none;
+      &-title {
+        font-size: $spacer * 1.6;
+      }
+      &-description {
+        width: 100%;
+        resize: none;
+      }
+    }
+  }
+}
