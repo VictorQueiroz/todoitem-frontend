@@ -1,0 +1,35 @@
+<mat-card>
+  <mat-card-content>
+    <div
+      class="todo-create-form-todo-item-id mat-small mat-caption"
+      *ngIf="todoItem.id !== null"
+    >
+      #{{ todoItem.id }}
+    </div>
+    <div class="todo-create-form-input-group">
+      <input
+        [disabled]="disabled"
+        placeholder="Title"
+        class="todo-create-form-input todo-create-form-input-title"
+        [(ngModel)]="todoItem.title"
+      />
+    </div>
+    <div class="todo-create-form-input-group">
+      <textarea
+        [disabled]="disabled"
+        placeholder="Description"
+        class="todo-create-form-input todo-create-form-input-description"
+        (change)="onChangeDescription(todoItem)"
+        [(ngModel)]="todoItem.description"
+      ></textarea>
+    </div>
+    <button
+      [disabled]="disabled"
+      (click)="todoItem.id === null ? onCreate(todoItem) : onDelete(todoItem)"
+      mat-button
+      color="warn"
+    >
+      {{ disabled ? "Saving..." : todoItem.id === null ? "Save" : "Delete" }}
+    </button>
+  </mat-card-content>
+</mat-card>

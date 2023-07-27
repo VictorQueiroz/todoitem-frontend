@@ -1,0 +1,28 @@
+@import "../../../variables.scss";
+
+:host {
+  display: block;
+  &:not(:last-child) {
+    margin-bottom: $spacer * 2;
+  }
+  .todo-create-form {
+    &-todo-item-id {
+      margin-bottom: $spacer;
+    }
+    &-input-group {
+      &:not(:last-child) {
+        margin-bottom: $spacer;
+      }
+    }
+    &-input {
+      border: none;
+      width: 100%;
+      &-title {
+        font-size: $spacer * 1.6;
+      }
+      &-description {
+        resize: none;
+      }
+    }
+  }
+}

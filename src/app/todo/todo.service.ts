@@ -43,6 +43,13 @@ export class TodoService {
     url.searchParams.set('id', `${id}`);
     return this.httpClient.delete<TodoFunctionAppResult<true>>(url.href);
   }
+  public createTodoItem(newTodoItem: Omit<ITodoItem, 'id'>) {
+    const url = this.#createUrl('/api/CreateTodoItem');
+    return this.httpClient.post<TodoFunctionAppResult<ITodoItem>>(url.href, {
+      title: newTodoItem.title,
+      description: newTodoItem.description,
+    });
+  }
   #createUrl(url: string) {
     const out = new URL(url, environment.azure.baseUrl);
     out.searchParams.set('code', environment.azure.code);

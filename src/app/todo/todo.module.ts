@@ -9,15 +9,21 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { TodoCreateFormComponent } from './todo-create-form/todo-create-form.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   providers: [TodoService],
-  declarations: [TodoListComponent],
+  declarations: [TodoListComponent, TodoCreateFormComponent],
   imports: [
     HttpClientModule,
     CommonModule,
     MatProgressSpinnerModule,
     FormsModule,
+    /**
+     * @angular/material stuff
+     */
+    MatSnackBarModule,
     MatDialogModule,
     MatButtonModule,
     MatCardModule,
