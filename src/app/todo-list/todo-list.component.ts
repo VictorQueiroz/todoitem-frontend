@@ -1,10 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
 import { ITodoItem, TodoService } from '../todo/todo.service';
 import { Subscription, finalize } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TodoItemConfirmActionComponent } from './todo-item-confirm-action.component';
 import { ICreateTodoFormTodoItem } from '../todo/todo-create-form/todo-create-form.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  BreakpointObserver,
+  Breakpoints,
+  MediaMatcher,
+} from '@angular/cdk/layout';
 
 @Component({
   imports: [TodoItemConfirmActionComponent],
@@ -23,7 +28,7 @@ class ConfirmTodoItemDeletionDialog {
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.scss'],
 })
-export class TodoListComponent implements OnInit, OnDestroy {
+export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
   readonly #subscriptions = new Set<Subscription>();
   readonly #onScrollWindow = () => {
     const scrolledPercentage =
@@ -46,13 +51,87 @@ export class TodoListComponent implements OnInit, OnDestroy {
   public constructor(
     private readonly todoService: TodoService,
     private readonly matDialog: MatDialog,
-    private readonly snackBar: MatSnackBar
+    private readonly snackBar: MatSnackBar,
+    private readonly breakpointObserver: BreakpointObserver,
+    private readonly mediaMatcher: MediaMatcher
   ) {}
+  public breakpoints = {
+    smallDevice: true,
+    largeDevice: false,
+    extraLargeDevice: false,
+  };
+  public groupedTodoItems: {
+    groups: ITodoItem[][];
+    itemsPerRow: number;
+    count: number;
+  } = {
+    count: this.todoItems.length,
+    groups: [],
+    itemsPerRow: 1,
+  };
   public ngOnInit(): void {
+    const breakpointSubscription = this.breakpointObserver
+      .observe([
+        Breakpoints.Large,
+        Breakpoints.XLarge,
+        Breakpoints.Small,
+        Breakpoints.XSmall,
+      ])
+      .subscribe(() => {
+        this.breakpoints = {
+          smallDevice: false,
+          largeDevice: false,
+          extraLargeDevice: false,
+        };
+        for (const check of [
+          {
+            breakpoints: [Breakpoints.Small, Breakpoints.XSmall],
+            change: () => {
+              this.breakpoints.smallDevice = true;
+            },
+          },
+          {
+            breakpoints: [Breakpoints.Medium, Breakpoints.Large],
+            change: () => {
+              this.breakpoints.largeDevice = true;
+            },
+          },
+          {
+            breakpoints: [Breakpoints.XLarge],
+            change: () => {
+              this.breakpoints.extraLargeDevice = true;
+            },
+          },
+        ]) {
+          if (
+            check.breakpoints.some(
+              (b) => this.mediaMatcher.matchMedia(b).matches
+            )
+          ) {
+            check.change();
+            break;
+          }
+        }
+      });
     this.#getMoreTodoItems();
     window.addEventListener('scroll', this.#onScrollWindow);
+    this.#addSubscription(breakpointSubscription);
+  }
+  public ngDoCheck() {
+    const rows = this.#todoItemRows();
+    if (
+      this.todoItems.length === this.groupedTodoItems.count &&
+      rows.itemsPerRow === this.groupedTodoItems.itemsPerRow
+    ) {
+      return;
+    }
+    this.groupedTodoItems = rows;
   }
   public ngOnDestroy(): void {
+    for (const s of this.#subscriptions) {
+      s.unsubscribe();
+      this.#subscriptions.delete(s);
+    }
     window.removeEventListener('scroll', this.#onScrollWindow);
   }
   public isBusy(todoItem: ITodoItem) {
@@ -66,10 +145,8 @@ export class TodoListComponent implements OnInit, OnDestroy {
       ...input,
       id: input.id,
     };
-    const dialogRef = this.matDialog.open(ConfirmTodoItemDeletionDialog, {
-      width: '250px',
-    });
-    dialogRef.afterClosed().subscribe((result: boolean) => {
+    const dialogRef = this.matDialog.open(ConfirmTodoItemDeletionDialog);
+    const sub = dialogRef.afterClosed().subscribe((result: boolean) => {
       if (!result || this.isBusy(todoItem)) {
         return;
       }
@@ -88,6 +165,7 @@ export class TodoListComponent implements OnInit, OnDestroy {
         });
       this.#addSubscription(sub);
     });
+    this.#addSubscription(sub);
   }
   public createNewTodoItem(input: ICreateTodoFormTodoItem) {
     this.isCreatingTodoItem = true;
@@ -100,7 +178,7 @@ export class TodoListComponent implements OnInit, OnDestroy {
       )
       .subscribe((newTodoItem) => {
         if ('error' in newTodoItem) {
-          this.snackBar.open(
+          this.#openSnackbar(
             `Failed to add new todo item with error: ${newTodoItem.error}`
           );
           return;
@@ -111,14 +189,18 @@ export class TodoListComponent implements OnInit, OnDestroy {
           description: '',
         };
         this.todoItems.unshift(newTodoItem.success);
+        if (this.todoItemCount !== null) {
+          this.todoItemCount++;
+        }
       });
     this.#addSubscription(sub);
   }
   public onChangeNewTodoItem(input: ICreateTodoFormTodoItem) {
     this.newTodoItem = input;
   }
-  public onChangeDescription(input: ICreateTodoFormTodoItem) {
+  public onChangeTodoItem(input: ICreateTodoFormTodoItem) {
     const todoItem = this.#createTodoFormTodoItemToTodoItemOrNull(input);
+    console.log(todoItem);
     if (todoItem === null || this.isBusy(todoItem)) {
       return;
     }
@@ -138,6 +220,31 @@ export class TodoListComponent implements OnInit, OnDestroy {
   public hasMoreAvailable() {
     return this.todoItemCount === this.todoItems.length;
   }
+  #todoItemRows() {
+    const todoItems = Array.from(this.todoItems);
+    const groups = new Array<ITodoItem[]>();
+    let itemsPerRow = 1;
+    if (this.breakpoints.largeDevice) {
+      itemsPerRow = 2;
+    } else if (this.breakpoints.extraLargeDevice) {
+      itemsPerRow = 4;
+    }
+
+    while (todoItems.length > 0) {
+      const group = todoItems.splice(0, itemsPerRow);
+      groups.push(group);
+    }
+    return {
+      groups,
+      count: this.todoItems.length,
+      itemsPerRow,
+    };
+  }
+  #openSnackbar(content: string, title?: string) {
+    this.snackBar.open(content, title, {
+      duration: 5000,
+    });
+  }
   #getMoreTodoItems() {
     if (this.isGettingTodoItems || this.hasMoreAvailable()) {
       return;
@@ -153,8 +260,9 @@ export class TodoListComponent implements OnInit, OnDestroy {
         )
         .subscribe((result) => {
           if ('error' in result) {
-            this.snackBar.open(
-              `Failed to list todo items with error: ${result}`
+            this.#openSnackbar(
+              `Failed to list todo items with error: ${result}`,
+              'Error'
             );
           } else {
             const { count, todoItems } = result.success;

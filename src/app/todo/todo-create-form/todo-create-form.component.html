@@ -12,6 +12,7 @@
         placeholder="Title"
         class="todo-create-form-input todo-create-form-input-title"
         [(ngModel)]="todoItem.title"
+        (change)="onChangeTitle(todoItem)"
       />
     </div>
     <div class="todo-create-form-input-group">
