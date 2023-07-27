@@ -24,6 +24,7 @@
           *ngFor="let todoItem of group"
         >
           <app-todo-item-existing-item-update-form
+            [onDelete]="onTodoItemDeleted.bind(this)"
             [todoItem]="todoItem"
           ></app-todo-item-existing-item-update-form>
         </div>

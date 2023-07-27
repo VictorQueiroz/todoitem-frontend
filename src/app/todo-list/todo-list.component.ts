@@ -142,35 +142,8 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
   public isBusy(todoItem: ITodoItem) {
     return this.busyItemIds.has(todoItem.id);
   }
-  public deleteTodoItem(input: ICreateTodoFormTodoItem) {
-    if (input.id === null) {
-      return;
-    }
-    const todoItem = {
-      ...input,
-      id: input.id,
-    };
-    const dialogRef = this.matDialog.open(ConfirmTodoItemDeletionDialog);
-    const sub = dialogRef.afterClosed().subscribe((result: boolean) => {
-      if (!result || this.isBusy(todoItem)) {
-        return;
-      }
-      this.busyItemIds.add(todoItem.id);
-      const sub = this.todoService
-        .deleteTodoItem(todoItem.id)
-        .pipe(
-          finalize(() => {
-            this.busyItemIds.delete(todoItem.id);
-          })
-        )
-        .subscribe((res) => {
-          if ('success' in res && res.success) {
-            this.todoItems = this.todoItems.filter((t) => t.id !== todoItem.id);
-          }
-        });
-      this.#addSubscription(sub);
-    });
-    this.#addSubscription(sub);
+  public onTodoItemDeleted(todoItem: ITodoItem) {
+    this.todoItems = this.todoItems.filter((t) => t.id !== todoItem.id);
   }
   public createNewTodoItem(input: ICreateTodoFormTodoItem) {
     if (this.isCreatingTodoItem) {
@@ -293,20 +266,20 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
     if (this.isGettingTodoItems || this.hasMoreAvailable()) {
       return;
     }
-    const initialSearch = this.search;
+    const initialSearch = this.search.newValue;
     this.isGettingTodoItems = true;
     this.#addSubscription(
       this.todoService
         .listTodoItems(
           this.todoItems.length,
           10,
-          this.#validSearch(initialSearch.newValue)
+          this.#validSearch(initialSearch)
         )
         .pipe(
           finalize(() => {
             this.isGettingTodoItems = false;
             if (
-              initialSearch.newValue !== this.search.newValue &&
+              initialSearch !== this.search.newValue &&
               this.#validSearch(this.search.newValue)
             ) {
               this.#reset();
