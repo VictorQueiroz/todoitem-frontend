@@ -33,13 +33,12 @@ class ConfirmTodoItemDeletionDialog {
   styleUrls: ['./todo-item-existing-item-update-form.component.scss'],
 })
 export class TodoItemExistingItemUpdateFormComponent {
-  @Input() public onDelete?: (todoItem: ITodoItem) => void;
+  @Input() public onDelete!: (todoItem: ITodoItem) => void;
   @Input() public todoItem!: ITodoItem;
   @Input() public hideItemId: boolean = false;
   readonly #subscriptions = new Set<Subscription>();
   public isBusy = false;
   public isSaving = false;
-  // public todoItem: ITodoItem | null = null;
   public constructor(
     private readonly matDialog: MatDialog,
     private readonly todoService: TodoService,
@@ -66,7 +65,7 @@ export class TodoItemExistingItemUpdateFormComponent {
         .subscribe((res) => {
           if ('success' in res) {
             if (res.success) {
-              if (this.onDelete) this.onDelete(todoItem);
+              this.onDelete(todoItem);
             }
           } else {
             this.matSnackBar.open(`Failed to delete todo item: ${res.error}`);
