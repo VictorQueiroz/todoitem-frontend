@@ -196,7 +196,7 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
           title: '',
           description: '',
         };
-        if (this.search) {
+        if (typeof this.#validSearch(this.search.newValue) !== 'undefined') {
           this.#reset();
           return;
         }
