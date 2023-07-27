@@ -26,10 +26,13 @@ export interface IListTodoItemsResult {
 })
 export class TodoService {
   public constructor(private readonly httpClient: HttpClient) {}
-  public listTodoItems(offset: number, limit: number) {
+  public listTodoItems(offset: number, limit: number, search?: string) {
     const url = this.#createUrl('/api/ListTodoItems');
     url.searchParams.set('offset', `${offset}`);
     url.searchParams.set('limit', `${limit}`);
+    if (search) {
+      url.searchParams.set('search', search);
+    }
     return this.httpClient.get<TodoFunctionAppResult<IListTodoItemsResult>>(
       url.href
     );

@@ -38,7 +38,12 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
       this.#getMoreTodoItems();
     }
   };
+  #searchTimeout: number | null = null;
   public todoItems = new Array<ITodoItem>();
+  public search = {
+    newValue: '',
+    oldValue: '',
+  };
   public newTodoItem: ICreateTodoFormTodoItem = {
     id: null,
     title: '',
@@ -168,6 +173,9 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
     this.#addSubscription(sub);
   }
   public createNewTodoItem(input: ICreateTodoFormTodoItem) {
+    if (this.isCreatingTodoItem) {
+      return;
+    }
     this.isCreatingTodoItem = true;
     const sub = this.todoService
       .createTodoItem(input)
@@ -176,10 +184,10 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
           this.isCreatingTodoItem = false;
         })
       )
-      .subscribe((newTodoItem) => {
-        if ('error' in newTodoItem) {
+      .subscribe((res) => {
+        if ('error' in res) {
           this.#openSnackbar(
-            `Failed to add new todo item with error: ${newTodoItem.error}`
+            `Failed to add new todo item with error: ${res.error}`
           );
           return;
         }
@@ -188,7 +196,11 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
           title: '',
           description: '',
         };
-        this.todoItems.unshift(newTodoItem.success);
+        if (this.search) {
+          this.#reset();
+          return;
+        }
+        this.todoItems.unshift(res.success);
         if (this.todoItemCount !== null) {
           this.todoItemCount++;
         }
@@ -200,7 +212,6 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
   }
   public onChangeTodoItem(input: ICreateTodoFormTodoItem) {
     const todoItem = this.#createTodoFormTodoItemToTodoItemOrNull(input);
-    console.log(todoItem);
     if (todoItem === null || this.isBusy(todoItem)) {
       return;
     }
@@ -218,7 +229,37 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
     this.#addSubscription(sub);
   }
   public hasMoreAvailable() {
-    return this.todoItemCount === this.todoItems.length;
+    return (
+      this.todoItemCount !== null &&
+      this.todoItemCount === this.todoItems.length
+    );
+  }
+  public onSearchChanged(event: Event) {
+    if (!(event.currentTarget instanceof HTMLInputElement)) {
+      return;
+    }
+    this.search = {
+      newValue: event.currentTarget.value,
+      oldValue: this.search.newValue,
+    };
+    if (this.#searchTimeout) {
+      clearTimeout(this.#searchTimeout);
+      this.#searchTimeout = null;
+    }
+    this.#searchTimeout = window.setTimeout(() => {
+      this.#reset();
+    }, 100);
+  }
+  #reset() {
+    if (
+      typeof this.#validSearch(this.search.newValue) !== 'undefined' ||
+      typeof this.#validSearch(this.search.oldValue) !== 'undefined'
+    ) {
+      this.todoItems = [];
+      this.todoItemCount = null;
+      this.groupedTodoItems = this.#todoItemRows();
+    }
+    this.#getMoreTodoItems();
   }
   #todoItemRows() {
     const todoItems = Array.from(this.todoItems);
@@ -245,17 +286,31 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
       duration: 5000,
     });
   }
+  #validSearch(value: string) {
+    return value.trim().length > 0 ? value : undefined;
+  }
   #getMoreTodoItems() {
     if (this.isGettingTodoItems || this.hasMoreAvailable()) {
       return;
     }
+    const initialSearch = this.search;
     this.isGettingTodoItems = true;
     this.#addSubscription(
       this.todoService
-        .listTodoItems(this.todoItems.length, 10)
+        .listTodoItems(
+          this.todoItems.length,
+          10,
+          this.#validSearch(initialSearch.newValue)
+        )
         .pipe(
           finalize(() => {
             this.isGettingTodoItems = false;
+            if (
+              initialSearch.newValue !== this.search.newValue &&
+              this.#validSearch(this.search.newValue)
+            ) {
+              this.#reset();
+            }
           })
         )
         .subscribe((result) => {

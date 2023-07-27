@@ -1,4 +1,13 @@
 <div class="todo-list">
+  <mat-form-field class="todo-list-search-input">
+    <mat-label>Search</mat-label>
+    <input
+      matInput
+      placeholder="Ex. Buy pizza"
+      [value]="search.newValue"
+      (input)="onSearchChanged($event)"
+    />
+  </mat-form-field>
   <app-todo-create-form
     [todoItem]="newTodoItem"
     [disabled]="isCreatingTodoItem"

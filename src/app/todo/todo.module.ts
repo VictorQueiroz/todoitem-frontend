@@ -14,6 +14,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TodoItemDetailsComponent } from './todo-item-details/todo-item-details.component';
 import { RouterModule } from '@angular/router';
 import { TodoItemExistingItemUpdateFormComponent } from './todo-item-existing-item-update-form/todo-item-existing-item-update-form.component';
+import { TodoItemSearchPageComponent } from './todo-item-search-page/todo-item-search-page.component';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   providers: [TodoService],
@@ -22,6 +24,7 @@ import { TodoItemExistingItemUpdateFormComponent } from './todo-item-existing-it
     TodoCreateFormComponent,
     TodoItemDetailsComponent,
     TodoItemExistingItemUpdateFormComponent,
+    TodoItemSearchPageComponent,
   ],
   imports: [
     RouterModule,
@@ -32,6 +35,7 @@ import { TodoItemExistingItemUpdateFormComponent } from './todo-item-existing-it
     /**
      * @angular/material stuff
      */
+    MatInputModule,
     MatSnackBarModule,
     MatDialogModule,
     MatButtonModule,
