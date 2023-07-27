@@ -1,9 +1,9 @@
 import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
-import { ITodoItem, TodoService } from '../todo/todo.service';
+import { ITodoItem, TodoService } from '../todo.service';
 import { Subscription, finalize } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TodoItemConfirmActionComponent } from './todo-item-confirm-action.component';
-import { ICreateTodoFormTodoItem } from '../todo/todo-create-form/todo-create-form.component';
+import { ICreateTodoFormTodoItem } from '../todo-create-form/todo-create-form.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   BreakpointObserver,

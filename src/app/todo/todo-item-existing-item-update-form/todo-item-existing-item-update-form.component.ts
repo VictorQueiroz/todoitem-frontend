@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ITodoItem, TodoService } from '../todo.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { TodoItemConfirmActionComponent } from 'src/app/todo-list/todo-item-confirm-action.component';
+import { TodoItemConfirmActionComponent } from 'src/app/todo/todo-list/todo-item-confirm-action.component';
 import { Subscription, finalize } from 'rxjs';
 import { ICreateTodoFormTodoItem } from '../todo-create-form/todo-create-form.component';
 import { ActivatedRoute } from '@angular/router';
