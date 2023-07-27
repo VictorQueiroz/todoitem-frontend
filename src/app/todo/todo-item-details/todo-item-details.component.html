@@ -1,0 +1,14 @@
+<div class="todo-item-details">
+  <div class="todo-item-details-spinner" *ngIf="isBusy && todoItem === null">
+    <mat-spinner color="red" diameter="35"></mat-spinner>
+    <p>Loading...</p>
+  </div>
+  <ng-container *ngIf="todoItem !== null">
+    <app-todo-item-existing-item-update-form
+      [hideItemId]="true"
+      [onDelete]="onDelete.bind(this)"
+      [todoItem]="todoItem"
+    >
+    </app-todo-item-existing-item-update-form>
+  </ng-container>
+</div>

@@ -2,13 +2,13 @@
   <mat-card-content>
     <div
       class="todo-create-form-todo-item-id mat-small mat-caption"
-      *ngIf="todoItem.id !== null"
+      *ngIf="todoItem.id !== null && !hideItemId"
     >
-      #{{ todoItem.id }}
+      <a [routerLink]="['/', 'todo-item', todoItem.id]"> #{{ todoItem.id }} </a>
     </div>
     <div class="todo-create-form-input-group">
       <input
-        [disabled]="disabled"
+        [disabled]="isDisabled()"
         placeholder="Title"
         class="todo-create-form-input todo-create-form-input-title"
         [(ngModel)]="todoItem.title"
@@ -17,7 +17,7 @@
     </div>
     <div class="todo-create-form-input-group">
       <textarea
-        [disabled]="disabled"
+        [disabled]="isDisabled()"
         placeholder="Description"
         class="todo-create-form-input todo-create-form-input-description"
         (change)="onChangeDescription(todoItem)"
@@ -25,18 +25,20 @@
       ></textarea>
     </div>
     <button
-      [disabled]="disabled"
+      [disabled]="isDisabled()"
       (click)="todoItem.id === null ? onCreate(todoItem) : onDelete(todoItem)"
       mat-button
       mat-raised-button
-      [color]="todoItem.id === null ? 'primary' : 'warn'"
+      [color]="isSaving ? 'primary' : todoItem.id === null ? 'primary' : 'warn'"
     >
       {{
         todoItem.id === null
-          ? disabled
+          ? isDisabled()
             ? "Saving..."
             : "Save"
-          : disabled
+          : isSaving
+          ? "Saving..."
+          : isDisabled()
           ? "Deleting..."
           : "Delete"
       }}

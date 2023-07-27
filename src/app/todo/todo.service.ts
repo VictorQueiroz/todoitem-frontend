@@ -38,6 +38,11 @@ export class TodoService {
     const url = this.#createUrl('/api/UpdateTodoItem');
     return this.httpClient.put<TodoFunctionAppResult<true>>(url.href, todoItem);
   }
+  public getTodoItem(id: number) {
+    const url = this.#createUrl('/api/GetTodoItem');
+    url.searchParams.set('id', `${id}`);
+    return this.httpClient.get<TodoFunctionAppResult<ITodoItem>>(url.href);
+  }
   public deleteTodoItem(id: number) {
     const url = this.#createUrl('/api/DeleteTodoItem');
     url.searchParams.set('id', `${id}`);

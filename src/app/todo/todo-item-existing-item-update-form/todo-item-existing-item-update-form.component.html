@@ -1,0 +1,13 @@
+<div class="todo-item-existing-update-form">
+  <ng-container *ngIf="todoItem !== null">
+    <app-todo-create-form
+      [todoItem]="todoItem"
+      [hideItemId]="hideItemId"
+      [onChangeTitle]="onChangeTodoItem.bind(this)"
+      [onChangeDescription]="onChangeTodoItem.bind(this)"
+      [onDelete]="deleteTodoItem.bind(this)"
+      [disabled]="isBusy"
+      [isSaving]="isSaving"
+    ></app-todo-create-form>
+  </ng-container>
+</div>

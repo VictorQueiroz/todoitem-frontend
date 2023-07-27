@@ -11,11 +11,20 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TodoCreateFormComponent } from './todo-create-form/todo-create-form.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { TodoItemDetailsComponent } from './todo-item-details/todo-item-details.component';
+import { RouterModule } from '@angular/router';
+import { TodoItemExistingItemUpdateFormComponent } from './todo-item-existing-item-update-form/todo-item-existing-item-update-form.component';
 
 @NgModule({
   providers: [TodoService],
-  declarations: [TodoListComponent, TodoCreateFormComponent],
+  declarations: [
+    TodoListComponent,
+    TodoCreateFormComponent,
+    TodoItemDetailsComponent,
+    TodoItemExistingItemUpdateFormComponent,
+  ],
   imports: [
+    RouterModule,
     HttpClientModule,
     CommonModule,
     MatProgressSpinnerModule,

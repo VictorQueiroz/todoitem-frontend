@@ -1,0 +1,13 @@
+@import "../../../variables.scss";
+
+.todo-item-details {
+  padding: $spacer;
+  &-spinner {
+    margin-top: $spacer;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacer;
+  }
+}
