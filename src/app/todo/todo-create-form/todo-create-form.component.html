@@ -28,9 +28,18 @@
       [disabled]="disabled"
       (click)="todoItem.id === null ? onCreate(todoItem) : onDelete(todoItem)"
       mat-button
-      color="warn"
+      mat-raised-button
+      [color]="todoItem.id === null ? 'primary' : 'warn'"
     >
-      {{ disabled ? "Saving..." : todoItem.id === null ? "Save" : "Delete" }}
+      {{
+        todoItem.id === null
+          ? disabled
+            ? "Saving..."
+            : "Save"
+          : disabled
+          ? "Deleting..."
+          : "Delete"
+      }}
     </button>
   </mat-card-content>
 </mat-card>
