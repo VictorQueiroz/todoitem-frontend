@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 export interface ITodoItem {
   id: number;
@@ -27,41 +26,39 @@ export interface IListTodoItemsResult {
 export class TodoService {
   public constructor(private readonly httpClient: HttpClient) {}
   public listTodoItems(offset: number, limit: number, search?: string) {
-    const url = this.#createUrl('/api/ListTodoItems');
-    url.searchParams.set('offset', `${offset}`);
-    url.searchParams.set('limit', `${limit}`);
+    const params = new URLSearchParams();
+    params.set('offset', `${offset}`);
+    params.set('limit', `${limit}`);
     if (search) {
-      url.searchParams.set('search', search);
+      params.set('search', search);
     }
     return this.httpClient.get<TodoFunctionAppResult<IListTodoItemsResult>>(
-      url.href
+      `/api/ListTodoItems?${params.toString()}`
     );
   }
   public updateTodoItem(todoItem: ITodoItem) {
-    const url = this.#createUrl('/api/UpdateTodoItem');
-    return this.httpClient.put<TodoFunctionAppResult<true>>(url.href, todoItem);
+    return this.httpClient.put<TodoFunctionAppResult<true>>(
+      '/api/UpdateTodoItem',
+      todoItem
+    );
   }
   public getTodoItem(id: number) {
-    const url = this.#createUrl('/api/GetTodoItem');
-    url.searchParams.set('id', `${id}`);
-    return this.httpClient.get<TodoFunctionAppResult<ITodoItem>>(url.href);
+    return this.httpClient.get<TodoFunctionAppResult<ITodoItem>>(
+      `/api/GetTodoItem?id=${id}`
+    );
   }
   public deleteTodoItem(id: number) {
-    const url = this.#createUrl('/api/DeleteTodoItem');
-    url.searchParams.set('id', `${id}`);
-    return this.httpClient.delete<TodoFunctionAppResult<true>>(url.href);
+    return this.httpClient.delete<TodoFunctionAppResult<true>>(
+      `/api/DeleteTodoItem?id=${id}`
+    );
   }
   public createTodoItem(newTodoItem: Omit<ITodoItem, 'id'>) {
-    const url = this.#createUrl('/api/CreateTodoItem');
-    return this.httpClient.post<TodoFunctionAppResult<ITodoItem>>(url.href, {
-      title: newTodoItem.title,
-      description: newTodoItem.description,
-    });
-  }
-  #createUrl(url: string) {
-    const out = new URL(url, environment.azure.baseUrl);
-    out.searchParams.set('code', environment.azure.code);
-    out.searchParams.set('clientId', environment.azure.clientId);
-    return out;
+    return this.httpClient.post<TodoFunctionAppResult<ITodoItem>>(
+      '/api/CreateTodoItem',
+      {
+        title: newTodoItem.title,
+        description: newTodoItem.description,
+      }
+    );
   }
 }
