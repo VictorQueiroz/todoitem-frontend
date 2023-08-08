@@ -1,5 +1,5 @@
 import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
-import { ITodoItem, TodoService } from '../todo.service';
+import { ITodoItem, TodoItemStatus, TodoService } from '../todo.service';
 import { Subscription, finalize } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TodoItemConfirmActionComponent } from './todo-item-confirm-action.component';
@@ -10,6 +10,7 @@ import {
   Breakpoints,
   MediaMatcher,
 } from '@angular/cdk/layout';
+import { DateTime } from 'luxon';
 
 @Component({
   imports: [TodoItemConfirmActionComponent],
@@ -21,6 +22,18 @@ class ConfirmTodoItemDeletionDialog {
   public constructor(
     public dialogRef: MatDialogRef<ConfirmTodoItemDeletionDialog>
   ) {}
+}
+
+function initialCreateTodoFormTodoItem(): ICreateTodoFormTodoItem {
+  return {
+    id: null,
+    status: TodoItemStatus.Pending,
+    label: null,
+    title: '',
+    startDate: DateTime.now().toJSDate(),
+    endDate: DateTime.now().plus({ days: 1 }).toJSDate(),
+    description: '',
+  };
 }
 
 @Component({
@@ -44,11 +57,7 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
     newValue: '',
     oldValue: '',
   };
-  public newTodoItem: ICreateTodoFormTodoItem = {
-    id: null,
-    title: '',
-    description: '',
-  };
+  public newTodoItem: ICreateTodoFormTodoItem = initialCreateTodoFormTodoItem();
   public todoItemCount: number | null = null;
   public busyItemIds = new Set<number>();
   public isGettingTodoItems = false;
@@ -164,11 +173,7 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
           );
           return;
         }
-        this.newTodoItem = {
-          id: null,
-          title: '',
-          description: '',
-        };
+        this.newTodoItem = initialCreateTodoFormTodoItem();
         if (typeof this.#validSearch(this.search.newValue) !== 'undefined') {
           this.#reset();
           return;

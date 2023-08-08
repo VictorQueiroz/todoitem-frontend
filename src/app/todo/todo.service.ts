@@ -1,9 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+export enum TodoItemStatus {
+  Pending,
+  InProgress,
+  Finished,
+  Deleted,
+}
+
 export interface ITodoItem {
   id: number;
+  label: string | null;
   title: string;
+  startDate: Date;
+  endDate: Date;
+  status: TodoItemStatus;
   description: string | null;
 }
 

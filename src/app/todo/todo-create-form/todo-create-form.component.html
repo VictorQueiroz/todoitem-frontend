@@ -7,41 +7,120 @@
       <a [routerLink]="['/', 'todo-item', todoItem.id]"> #{{ todoItem.id }} </a>
     </div>
     <div class="todo-create-form-input-group">
+      <mat-chip-listbox aria-label="Task label">
+        <mat-chip-option
+          (selectionChange)="onChangeLabel($event)"
+          *ngFor="let label of defaultTodoItemLabels"
+          [selected]="todoItem.label === label"
+        >
+          {{ label }}
+        </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+    <div class="todo-create-form-input-group">
       <input
-        [disabled]="isDisabled()"
+        type="text"
         placeholder="Title"
+        required
         class="todo-create-form-input todo-create-form-input-title"
+        [disabled]="isDisabled()"
         [(ngModel)]="todoItem.title"
-        (change)="onChangeTitle(todoItem)"
+        (ngModelChange)="todoItemChange.emit(todoItem)"
       />
     </div>
     <div class="todo-create-form-input-group">
-      <textarea
-        [disabled]="isDisabled()"
-        placeholder="Description"
-        class="todo-create-form-input todo-create-form-input-description"
-        (change)="onChangeDescription(todoItem)"
-        [(ngModel)]="todoItem.description"
-      ></textarea>
+      <mat-form-field class="fill" subscriptSizing="dynamic">
+        <mat-label>Start date</mat-label>
+        <input
+          [value]="todoItem.startDate"
+          (dateChange)="onChangeStartDate($event)"
+          matInput
+          [matDatepicker]="startDate"
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="startDate"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #startDate></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="fill" subscriptSizing="dynamic">
+        <mat-label>End date</mat-label>
+        <input
+          [value]="todoItem.endDate"
+          (dateChange)="onChangeEndDate($event)"
+          matInput
+          [matDatepicker]="endDate"
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="endDate"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #endDate></mat-datepicker>
+      </mat-form-field>
     </div>
-    <button
-      [disabled]="isDisabled()"
-      (click)="todoItem.id === null ? onCreate(todoItem) : onDelete(todoItem)"
-      mat-button
-      mat-raised-button
-      [color]="isSaving ? 'primary' : todoItem.id === null ? 'primary' : 'warn'"
-    >
-      {{
-        todoItem.id === null
-          ? isDisabled()
+    <div class="todo-create-form-input-group">
+      <mat-form-field class="fill">
+        <mat-label>Description</mat-label>
+        <textarea
+          matInput
+          [disabled]="isDisabled()"
+          placeholder="Add a description to the task"
+          class="todo-create-form-input todo-create-form-input-description"
+          (ngModelChange)="todoItemChange.emit(todoItem)"
+          [(ngModel)]="todoItem.description"
+        ></textarea>
+      </mat-form-field>
+    </div>
+    <section>
+      <ng-template #newTodoItem>
+        <button (click)="submit()" mat-button mat-raised-button>Create</button>
+      </ng-template>
+      <ng-container *ngIf="todoItem.id !== null; else newTodoItem">
+        <button
+          *ngIf="isInProgress()"
+          aria-label="Start the task"
+          mat-button
+          mat-raised-button
+        >
+          Start
+        </button>
+        <!-- TODO: maybe check if not expired already -->
+        <button
+          aria-label="Finish the task"
+          mat-button
+          mat-raised-button
+          *ngIf="isInProgress()"
+        >
+          Finish
+        </button>
+        <button
+          aria-label="Delete"
+          mat-button
+          mat-raised-button
+          *ngIf="isInProgress()"
+        >
+          Finish
+        </button>
+      </ng-container>
+      <!-- <button
+        [disabled]="isDisabled()"
+        (click)="submit()"
+        mat-button
+        mat-raised-button
+        [color]="isSaving ? 'primary' : todoItem.id === null ? 'primary' : 'warn'"
+      >
+        {{
+          todoItem.id === null
+            ? isDisabled()
+              ? "Saving..."
+              : "Save"
+            : isSaving
             ? "Saving..."
-            : "Save"
-          : isSaving
-          ? "Saving..."
-          : isDisabled()
-          ? "Deleting..."
-          : "Delete"
-      }}
-    </button>
+            : isDisabled()
+            ? "Deleting..."
+            : "Delete"
+        }}
+      </button> -->
+    </section>
   </mat-card-content>
 </mat-card>

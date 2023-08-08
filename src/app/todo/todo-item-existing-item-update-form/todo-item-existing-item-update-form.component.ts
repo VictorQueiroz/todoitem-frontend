@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { ITodoItem, TodoService } from '../todo.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TodoItemConfirmActionComponent } from 'src/app/todo/todo-list/todo-item-confirm-action.component';
@@ -32,10 +39,11 @@ class ConfirmTodoItemDeletionDialog {
   templateUrl: './todo-item-existing-item-update-form.component.html',
   styleUrls: ['./todo-item-existing-item-update-form.component.scss'],
 })
-export class TodoItemExistingItemUpdateFormComponent {
-  @Input() public onDelete!: (todoItem: ITodoItem) => void;
+export class TodoItemExistingItemUpdateFormComponent implements OnDestroy {
+  #changeTodoItemTimer: number | null = null;
   @Input() public todoItem!: ITodoItem;
   @Input() public hideItemId: boolean = false;
+  @Output() public onDelete = new EventEmitter<ITodoItem>();
   readonly #subscriptions = new Set<Subscription>();
   public isBusy = false;
   public isSaving = false;
@@ -44,6 +52,9 @@ export class TodoItemExistingItemUpdateFormComponent {
     private readonly todoService: TodoService,
     private readonly matSnackBar: MatSnackBar
   ) {}
+  public ngOnDestroy(): void {
+    if (this.#changeTodoItemTimer) clearTimeout(this.#changeTodoItemTimer);
+  }
   public deleteTodoItem(input: ICreateTodoFormTodoItem) {
     const todoItem = createTodoFormTodoItemToTodoItemOrNull(input);
     if (!todoItem) {
@@ -65,7 +76,7 @@ export class TodoItemExistingItemUpdateFormComponent {
         .subscribe((res) => {
           if ('success' in res) {
             if (res.success) {
-              this.onDelete(todoItem);
+              this.onDelete.emit(todoItem);
             }
           } else {
             this.matSnackBar.open(`Failed to delete todo item: ${res.error}`);
@@ -75,14 +86,19 @@ export class TodoItemExistingItemUpdateFormComponent {
     });
     this.#addSubscription(sub);
   }
-  public onChangeTodoItem(input: ICreateTodoFormTodoItem) {
-    const todoItem = createTodoFormTodoItemToTodoItemOrNull(input);
-    if (todoItem === null || this.isSaving) {
-      return;
+  public onChangeTodoItem(_: ICreateTodoFormTodoItem) {
+    if (this.#changeTodoItemTimer !== null) {
+      clearTimeout(this.#changeTodoItemTimer);
     }
+    this.#changeTodoItemTimer = setTimeout(() => {
+      this.#changeTodoItemTimer = null;
+      this.#updateTodoItem();
+    }, 500);
+  }
+  #updateTodoItem() {
     this.isSaving = true;
     const sub = this.todoService
-      .updateTodoItem(todoItem)
+      .updateTodoItem(this.todoItem)
       .pipe(
         finalize(() => {
           this.isSaving = false;

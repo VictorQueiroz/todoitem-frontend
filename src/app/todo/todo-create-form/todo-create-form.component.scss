@@ -10,6 +10,12 @@
       margin-bottom: $spacer;
     }
     &-input-group {
+      display: flex;
+      flex-direction: row;
+      gap: $spacer;
+      .fill {
+        flex: 1;
+      }
       &:not(:last-child) {
         margin-bottom: $spacer;
       }

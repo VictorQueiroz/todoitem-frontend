@@ -17,6 +17,11 @@ import { TodoItemExistingItemUpdateFormComponent } from './todo-item-existing-it
 import { TodoItemSearchPageComponent } from './todo-item-search-page/todo-item-search-page.component';
 import { MatInputModule } from '@angular/material/input';
 import { AuthInterceptor } from './auth.interceptor';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
   providers: [
@@ -44,9 +49,14 @@ import { AuthInterceptor } from './auth.interceptor';
     /**
      * @angular/material stuff
      */
+    MatChipsModule,
     MatInputModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatGridListModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
     MatButtonModule,
     MatCardModule,
     MatTableModule,

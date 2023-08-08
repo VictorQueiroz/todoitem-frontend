@@ -11,9 +11,8 @@
   <app-todo-create-form
     [todoItem]="newTodoItem"
     [disabled]="isCreatingTodoItem"
-    [onChangeTitle]="onChangeNewTodoItem.bind(this)"
-    [onChangeDescription]="onChangeNewTodoItem.bind(this)"
-    [onCreate]="createNewTodoItem.bind(this)"
+    (todoItemChange)="onChangeNewTodoItem($event)"
+    (onCreate)="createNewTodoItem($event)"
   ></app-todo-create-form>
   <p *ngIf="!isGettingTodoItems">{{ todoItemCount }} results</p>
   <div class="todo-list-todo-items">
@@ -24,7 +23,7 @@
           *ngFor="let todoItem of group"
         >
           <app-todo-item-existing-item-update-form
-            [onDelete]="onTodoItemDeleted.bind(this)"
+            (onDelete)="onTodoItemDeleted($event)"
             [todoItem]="todoItem"
           ></app-todo-item-existing-item-update-form>
         </div>

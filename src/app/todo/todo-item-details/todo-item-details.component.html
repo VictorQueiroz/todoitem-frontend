@@ -6,7 +6,7 @@
   <ng-container *ngIf="todoItem !== null">
     <app-todo-item-existing-item-update-form
       [hideItemId]="true"
-      [onDelete]="onDelete.bind(this)"
+      (onDelete)="onDelete()"
       [todoItem]="todoItem"
     >
     </app-todo-item-existing-item-update-form>
