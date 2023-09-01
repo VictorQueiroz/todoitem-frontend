@@ -20,6 +20,11 @@
     <div class="todo-create-form-input-group">
       <input
         type="text"
+        [id]="
+          todoItem.id !== null
+            ? 'existing-todo-item-title'
+            : 'new-todo-item-title'
+        "
         placeholder="Title"
         required
         class="todo-create-form-input todo-create-form-input-title"
@@ -73,7 +78,15 @@
     </div>
     <section>
       <ng-template #newTodoItem>
-        <button (click)="submit()" mat-button mat-raised-button>Create</button>
+        <button
+          data-test-id="create-new-todo-item-button"
+          aria-label="Create"
+          (click)="submit()"
+          mat-button
+          mat-raised-button
+        >
+          Create
+        </button>
       </ng-template>
       <ng-container *ngIf="todoItem.id !== null; else newTodoItem">
         <button
