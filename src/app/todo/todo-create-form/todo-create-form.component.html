@@ -77,7 +77,8 @@
       </ng-template>
       <ng-container *ngIf="todoItem.id !== null; else newTodoItem">
         <button
-          *ngIf="isInProgress()"
+          *ngIf="false"
+          [disabled]="isInProgress()"
           aria-label="Start the task"
           mat-button
           mat-raised-button
@@ -86,10 +87,11 @@
         </button>
         <!-- TODO: maybe check if not expired already -->
         <button
+          *ngIf="false"
           aria-label="Finish the task"
           mat-button
           mat-raised-button
-          *ngIf="isInProgress()"
+          [disabled]="isInProgress()"
         >
           Finish
         </button>
@@ -97,30 +99,12 @@
           aria-label="Delete"
           mat-button
           mat-raised-button
-          *ngIf="isInProgress()"
+          [disabled]="isInProgress()"
+          (click)="submit()"
         >
-          Finish
+          Delete
         </button>
       </ng-container>
-      <!-- <button
-        [disabled]="isDisabled()"
-        (click)="submit()"
-        mat-button
-        mat-raised-button
-        [color]="isSaving ? 'primary' : todoItem.id === null ? 'primary' : 'warn'"
-      >
-        {{
-          todoItem.id === null
-            ? isDisabled()
-              ? "Saving..."
-              : "Save"
-            : isSaving
-            ? "Saving..."
-            : isDisabled()
-            ? "Deleting..."
-            : "Delete"
-        }}
-      </button> -->
     </section>
   </mat-card-content>
 </mat-card>
