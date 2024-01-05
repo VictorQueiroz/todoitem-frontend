@@ -44,31 +44,35 @@ export class TodoService {
       params.set('search', search);
     }
     return this.httpClient.get<TodoFunctionAppResult<IListTodoItemsResult>>(
-      `/api/ListTodoItems?${params.toString()}`
+      `/api/list-todo-items?${params.toString()}`
     );
   }
   public updateTodoItem(todoItem: ITodoItem) {
     return this.httpClient.put<TodoFunctionAppResult<true>>(
-      '/api/UpdateTodoItem',
+      '/api/update-todo-item',
       todoItem
     );
   }
   public getTodoItem(id: number) {
     return this.httpClient.get<TodoFunctionAppResult<ITodoItem>>(
-      `/api/GetTodoItem?id=${id}`
+      `/api/get-todo-item?id=${id}`
     );
   }
   public deleteTodoItem(id: number) {
     return this.httpClient.delete<TodoFunctionAppResult<true>>(
-      `/api/DeleteTodoItem?id=${id}`
+      `/api/delete-todo-item?id=${id}`
     );
   }
   public createTodoItem(newTodoItem: Omit<ITodoItem, 'id'>) {
     return this.httpClient.post<TodoFunctionAppResult<ITodoItem>>(
-      '/api/CreateTodoItem',
+      '/api/create-todo-item',
       {
         title: newTodoItem.title,
         description: newTodoItem.description,
+        startDate: newTodoItem.startDate,
+        finalDate: newTodoItem.endDate,
+        label: newTodoItem.label,
+        status: newTodoItem.status,
       }
     );
   }
