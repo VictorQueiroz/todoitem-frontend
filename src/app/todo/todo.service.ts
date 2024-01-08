@@ -13,6 +13,10 @@ export interface ITodoItem {
   label: string | null;
   title: string;
   startDate: Date;
+  /**
+   * Who this todo item is assigned to.
+   */
+  assignee: string;
   endDate: Date;
   status: TodoItemStatus;
   description: string | null;

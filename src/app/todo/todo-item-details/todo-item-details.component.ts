@@ -4,6 +4,7 @@ import { ITodoItem, TodoService } from '../todo.service';
 import { SubscriptionManagerService } from '../subscription-manager.service';
 import { finalize, map, mergeMap, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import getIncomingTodoItem from '../utilities/getIncomingTodoItem';
 
 @Component({
   selector: 'app-todo-item-details',
@@ -58,7 +59,7 @@ export class TodoItemDetailsComponent {
           );
           this.todoItem = null;
         } else {
-          this.todoItem = res.success;
+          this.todoItem = getIncomingTodoItem(res.success);
         }
       });
     this.subscriptionManager.add(sub);
