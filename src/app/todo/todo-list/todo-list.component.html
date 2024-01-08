@@ -15,18 +15,13 @@
     (onCreate)="createNewTodoItem($event)"
   ></app-todo-create-form>
   <p *ngIf="!isGettingTodoItems">{{ todoItemCount }} results</p>
-  <div class="todo-list-todo-items">
+  <div class="row">
     <ng-container *ngFor="let group of groupedTodoItems.groups">
-      <div class="todo-list-todo-items-row">
-        <div
-          class="todo-list-todo-items-row-item"
-          *ngFor="let todoItem of group"
-        >
-          <app-todo-item-existing-item-update-form
-            (onDelete)="onTodoItemDeleted($event)"
-            [todoItem]="todoItem"
-          ></app-todo-item-existing-item-update-form>
-        </div>
+      <div class="col-lg-6 todo-list-todo-item" *ngFor="let todoItem of group">
+        <app-todo-item-existing-item-update-form
+          (onDelete)="onTodoItemDeleted($event)"
+          [todoItem]="todoItem"
+        ></app-todo-item-existing-item-update-form>
       </div>
     </ng-container>
   </div>

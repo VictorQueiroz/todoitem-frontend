@@ -7,17 +7,8 @@
       margin-bottom: $spacer;
     }
     padding: $spacer;
-    &-todo-items {
-      &-row {
-        display: flex;
-        gap: $spacer;
-        &:not(:last-child) {
-          margin-bottom: $spacer * 2;
-        }
-        &-item {
-          flex: 1;
-        }
-      }
+    &-todo-item {
+      margin-bottom: $spacer;
     }
     &-footer {
       display: flex;

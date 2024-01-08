@@ -11,6 +11,7 @@ import {
   MediaMatcher,
 } from '@angular/cdk/layout';
 import { DateTime } from 'luxon';
+import getIncomingTodoItem from '../utilities/getIncomingTodoItem';
 
 @Component({
   imports: [TodoItemConfirmActionComponent],
@@ -27,6 +28,7 @@ class ConfirmTodoItemDeletionDialog {
 function initialCreateTodoFormTodoItem(): ICreateTodoFormTodoItem {
   return {
     id: null,
+    assignee: '',
     status: TodoItemStatus.Pending,
     label: null,
     title: '',
@@ -299,7 +301,13 @@ export class TodoListComponent implements OnInit, OnDestroy, DoCheck {
             );
           } else {
             const { count, todoItems } = result.success;
-            this.todoItems = [...this.todoItems, ...todoItems];
+            this.todoItems = [
+              ...this.todoItems,
+              /**
+               * Only patch incoming todo items. Not the already patched ones.
+               */
+              ...todoItems.map((t) => getIncomingTodoItem(t)),
+            ];
             this.todoItemCount = count;
           }
         })

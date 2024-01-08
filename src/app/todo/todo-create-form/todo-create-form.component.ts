@@ -21,6 +21,7 @@ export class TodoCreateFormComponent {
   @Input() public todoItem: ICreateTodoFormTodoItem = {
     id: null,
     status: TodoItemStatus.Pending,
+    assignee: '',
     label: null,
     startDate: DateTime.now().toJSDate(),
     endDate: DateTime.now().plus({ days: 1 }).toJSDate(),
@@ -58,8 +59,11 @@ export class TodoCreateFormComponent {
     this.todoItem.label = value;
     this.todoItemChange.emit(this.todoItem);
   }
+  public onChangeAssignee(newAssignee: string) {
+    this.todoItem.assignee = newAssignee;
+    this.todoItemChange.emit(this.todoItem);
+  }
   public onChangeStartDate(e: MatDatepickerInputEvent<Date>) {
-    console.log(e);
     if (!e.target.value) {
       return;
     }
