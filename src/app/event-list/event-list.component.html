@@ -1,0 +1,6 @@
+<div class="event-list">
+  <h3>Last 15 events</h3>
+  <p *ngFor="let event of events">
+    <span [innerHTML]="formatEvent(event)"></span>
+  </p>
+</div>
