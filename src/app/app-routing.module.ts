@@ -5,6 +5,7 @@ import { TodoModule } from './todo/todo.module';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { TodoItemDetailsComponent } from './todo/todo-item-details/todo-item-details.component';
 import { TodoItemSearchPageComponent } from './todo/todo-item-search-page/todo-item-search-page.component';
+import { EventListComponent } from './event-list/event-list.component';
 
 const routes: Routes = [
   {
@@ -20,9 +21,13 @@ const routes: Routes = [
     component: TodoItemDetailsComponent,
   },
   {
+    path: 'events',
+    component: EventListComponent
+  },
+  {
     path: '**',
     component: NotFoundComponent,
-  },
+  }
 ];
 
 @NgModule({
