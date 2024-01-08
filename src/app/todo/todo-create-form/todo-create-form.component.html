@@ -7,17 +7,6 @@
       <a [routerLink]="['/', 'todo-item', todoItem.id]"> #{{ todoItem.id }} </a>
     </div>
     <div class="todo-create-form-input-group">
-      <mat-chip-listbox aria-label="Task label">
-        <mat-chip-option
-          (selectionChange)="onChangeLabel($event)"
-          *ngFor="let label of defaultTodoItemLabels"
-          [selected]="todoItem.label === label"
-        >
-          {{ label }}
-        </mat-chip-option>
-      </mat-chip-listbox>
-    </div>
-    <div class="todo-create-form-input-group">
       <input
         type="text"
         placeholder="Title"
@@ -29,6 +18,15 @@
       />
     </div>
     <div class="todo-create-form-input-group">
+      <mat-form-field class="fill" subscriptSizing="dynamic">
+        <mat-label>Assignee</mat-label>
+        <input
+          #assigneeInput
+          matInput
+          (change)="onChangeAssignee(assigneeInput.value)"
+          [value]="todoItem.assignee"
+        />
+      </mat-form-field>
       <mat-form-field class="fill" subscriptSizing="dynamic">
         <mat-label>Start date</mat-label>
         <input
